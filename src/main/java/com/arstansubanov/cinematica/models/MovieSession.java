@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.validation.constraints.*;
 import java.time.LocalTime;
 import java.util.Date;
+import java.util.List;
 
 
 @Entity
@@ -49,6 +50,9 @@ public class MovieSession {
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
+
+    @OneToMany(mappedBy = "movieSession")
+    private List<Price> prices;
 
     @PrePersist
     @PreUpdate

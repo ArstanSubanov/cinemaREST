@@ -7,6 +7,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -39,6 +40,9 @@ public class User {
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
+
+    @OneToMany(mappedBy = "user")
+    private List<Order> orders;
 
     @PrePersist
     private void addDate(){

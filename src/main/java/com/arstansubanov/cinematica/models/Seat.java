@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -28,6 +29,9 @@ public class Seat {
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
+
+    @OneToMany(mappedBy = "seat")
+    private List<Order> orders;
 
     @PrePersist
     private void addDate(){

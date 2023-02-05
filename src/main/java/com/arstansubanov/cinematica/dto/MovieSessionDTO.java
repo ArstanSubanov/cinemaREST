@@ -3,6 +3,7 @@ package com.arstansubanov.cinematica.dto;
 import com.arstansubanov.cinematica.models.Hall;
 import com.arstansubanov.cinematica.models.Movie;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -17,7 +18,7 @@ import java.util.Date;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MovieSessionDTO {
 
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY, value = "id")
     private int id;
 
     @NotEmpty(message = "seat_rows can't be empty")

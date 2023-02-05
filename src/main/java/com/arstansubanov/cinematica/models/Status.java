@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 
 @Entity
@@ -21,4 +22,7 @@ public class Status {
     @Size(min = 2, max = 100, message = "name should be between 2 and 50 characters")
     @Column(name = "status_type")
     private String statusType;
+
+    @OneToMany(mappedBy = "status")
+    private List<Order> orders;
 }

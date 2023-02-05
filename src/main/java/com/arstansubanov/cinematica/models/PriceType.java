@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 
 @Entity
@@ -21,5 +22,8 @@ public class PriceType {
     @Size(min = 2, max = 100, message = "name should be between 2 and 200 characters")
     @Column(name = "type_name")
     private String typeName;
+
+    @OneToMany(mappedBy = "priceType")
+    private List<Price> prices;
 }
 

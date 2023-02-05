@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.validation.constraints.*;
 import java.util.Date;
+import java.util.List;
 
 
 @Entity
@@ -44,6 +45,12 @@ public class Hall {
     @ManyToOne
     @JoinColumn(name = "cinema_id", referencedColumnName = "id")
     private Cinema cinema;
+
+    @OneToMany(mappedBy = "hall")
+    private List<Seat> seats;
+
+    @OneToMany(mappedBy = "hall")
+    private List<MovieSession> movieSessions;
 
     @PrePersist
     @PreUpdate
