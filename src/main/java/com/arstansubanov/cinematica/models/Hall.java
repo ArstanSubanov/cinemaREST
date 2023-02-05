@@ -53,7 +53,6 @@ public class Hall {
     private List<MovieSession> movieSessions;
 
     @PrePersist
-    @PreUpdate
     public void addDate(){
         this.createdAt = new Date();
     }

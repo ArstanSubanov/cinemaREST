@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface SeatService extends BaseService<SeatDTO>{
     List<SeatDTO> findSeatsByHall(Hall hall);
+    void saveAll(List<Seat> seats);
+    void deleteByHall(Hall hall);
 }
