@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.validation.constraints.*;
 import java.util.Date;
+import java.util.List;
 
 
 @Entity
@@ -55,6 +56,9 @@ public class Movie {
     @AssertTrue(message = "active must be true or false")
     @Column(name = "active")
     private boolean active;
+
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
+    private List<MovieSession> movieSessions;
 
     @PrePersist
     private void create(){

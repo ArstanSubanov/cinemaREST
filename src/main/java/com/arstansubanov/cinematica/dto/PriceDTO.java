@@ -3,6 +3,7 @@ package com.arstansubanov.cinematica.dto;
 import com.arstansubanov.cinematica.models.MovieSession;
 import com.arstansubanov.cinematica.models.PriceType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -17,7 +18,7 @@ import javax.validation.constraints.NotNull;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PriceDTO {
 
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY, value = "id")
     private int id;
 
     @NotEmpty(message = "session_id can't be empty")

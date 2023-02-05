@@ -34,8 +34,8 @@ public class CinemaServiceImpl implements CinemaService {
 
     @Override
     public CinemaDTO findById(int id) {
-        Optional<Cinema> cinema = cinemaRepository.findById(id);
-        return cinemaMapper.convertToDto(cinema.orElse(null));
+        Cinema cinema = getCinemaById(id);
+        return cinemaMapper.convertToDto(cinema);
     }
 
     @Override
@@ -55,7 +55,14 @@ public class CinemaServiceImpl implements CinemaService {
     @Transactional
     public void update(int id, CinemaDTO cinemaDTO) {
         Cinema cinema = cinemaMapper.convertToModel(cinemaDTO);
+        Cinema cinemaToUpdate = getCinemaById(id);
         cinema.setId(id);
+        cinema.setCreatedAt(cinemaToUpdate.getCreatedAt());
         cinemaRepository.save(cinema);
+    }
+
+    private Cinema getCinemaById(int id){
+        Optional<Cinema> cinema = cinemaRepository.findById(id);
+        return cinema.orElse(null);
     }
 }

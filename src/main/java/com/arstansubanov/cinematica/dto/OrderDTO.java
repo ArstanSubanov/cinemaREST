@@ -5,6 +5,7 @@ import com.arstansubanov.cinematica.models.Seat;
 import com.arstansubanov.cinematica.models.Status;
 import com.arstansubanov.cinematica.models.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -15,7 +16,7 @@ import javax.validation.constraints.*;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderDTO {
 
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY, value = "id")
     private int id;
 
     @NotEmpty(message = "price_id can't be empty")

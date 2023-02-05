@@ -1,7 +1,7 @@
 package com.arstansubanov.cinematica.dto;
 
-import com.arstansubanov.cinematica.models.Cinema;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -11,7 +11,7 @@ import javax.validation.constraints.*;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class HallDTO {
 
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY, value = "id")
     private int id;
 
     @NotEmpty(message = "name can't be empty")
@@ -31,6 +31,6 @@ public class HallDTO {
     @Max(value = 1000, message = "place_numbers must be lower than 1000")
     private int placeNumbers;
 
-    private Cinema cinema;
+    private CinemaDTO cinema;
 
 }

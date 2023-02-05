@@ -1,6 +1,7 @@
 package com.arstansubanov.cinematica.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -13,7 +14,7 @@ import javax.validation.constraints.Size;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StatusDTO {
 
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY, value = "id")
     private int id;
 
     @NotNull(message = "type_name must be not null ")
