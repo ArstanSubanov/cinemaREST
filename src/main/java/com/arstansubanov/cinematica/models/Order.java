@@ -55,6 +55,11 @@ public class Order {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
+    @PrePersist
+    private void addDate(){
+        this.createdAt = new Date();
+    }
+
 
 
 }

@@ -1,11 +1,19 @@
 package com.arstansubanov.cinematica.services.impl;
 
+import com.arstansubanov.cinematica.dto.HallDTO;
+import com.arstansubanov.cinematica.dto.MovieDTO;
 import com.arstansubanov.cinematica.dto.MovieSessionDTO;
 import com.arstansubanov.cinematica.mapper.MovieSessionMapper;
+import com.arstansubanov.cinematica.mapper.MovieSessionRequestMapper;
 import com.arstansubanov.cinematica.models.MovieSession;
 import com.arstansubanov.cinematica.repository.MovieSessionRepository;
+import com.arstansubanov.cinematica.requests.MovieSessionRequest;
+import com.arstansubanov.cinematica.services.HallService;
+import com.arstansubanov.cinematica.services.MovieService;
 import com.arstansubanov.cinematica.services.MovieSessionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,11 +29,17 @@ public class MovieSessionServiceImpl implements MovieSessionService {
 
     private final MovieSessionRepository movieSessionRepository;
     private final MovieSessionMapper movieSessionMapper;
+    private final MovieService movieService;
+    private final HallService hallService;
+    private final MovieSessionRequestMapper movieSessionRequestMapper;
 
     @Autowired
-    public MovieSessionServiceImpl(MovieSessionRepository movieSessionRepository, MovieSessionMapper movieSessionMapper) {
+    public MovieSessionServiceImpl(MovieSessionRepository movieSessionRepository, MovieSessionMapper movieSessionMapper, MovieService movieService, HallService hallService, MovieSessionRequestMapper movieSessionRequestMapper) {
         this.movieSessionRepository = movieSessionRepository;
         this.movieSessionMapper = movieSessionMapper;
+        this.movieService = movieService;
+        this.hallService = hallService;
+        this.movieSessionRequestMapper = movieSessionRequestMapper;
     }
 
     @Override
@@ -63,6 +77,31 @@ public class MovieSessionServiceImpl implements MovieSessionService {
                 .stream()
                 .map(movieSessionMapper::convertToDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public ResponseEntity<?> create(MovieSessionRequest movieSessionRequest) {
+        MovieDTO movieDTO = movieService.findById(movieSessionRequest.getMovieId());
+        HallDTO hallDTO = hallService.findById(movieSessionRequest.getHallId());
+
+        MovieSessionDTO movieSessionDTO = movieSessionRequestMapper.convertToDto(movieSessionRequest);
+        movieSessionDTO.setMovie(movieDTO);
+        movieSessionDTO.setHall(hallDTO);
+
+        movieSessionRepository.save(movieSessionMapper.convertToModel(movieSessionDTO));
+        return ResponseEntity.ok(HttpStatus.CREATED);
+    }
+
+    @Override
+    public ResponseEntity<?> updateMovieSession(int id, MovieSessionRequest movieSessionRequest) {
+        MovieDTO movieDTO = movieService.findById(movieSessionRequest.getMovieId());
+        HallDTO hallDTO = hallService.findById(movieSessionRequest.getHallId());
+        MovieSessionDTO movieSessionDTO = movieSessionRequestMapper.convertToDto(movieSessionRequest);
+        movieSessionDTO.setId(id);
+        movieSessionDTO.setMovie(movieDTO);
+        movieSessionDTO.setHall(hallDTO);
+        movieSessionRepository.save(movieSessionMapper.convertToModel(movieSessionDTO));
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     private MovieSession getMovieSessionById(int id){

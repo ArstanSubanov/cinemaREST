@@ -1,7 +1,7 @@
 package com.arstansubanov.cinematica.models;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.*;
@@ -11,7 +11,10 @@ import java.util.List;
 
 
 @Entity
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "tb_session")
 public class MovieSession {
     @Id
@@ -55,9 +58,8 @@ public class MovieSession {
     private List<Price> prices;
 
     @PrePersist
-    @PreUpdate
     private void addDate(){
-        this.date = new Date();
+        this.createdAt = new Date();
     }
 
 

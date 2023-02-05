@@ -43,6 +43,7 @@ public class SeatServiceImpl implements SeatService {
         seatRepository.save(seatMapper.convertToModel(seatDTO));
     }
 
+    @Override
     @Transactional
     public void saveAll(List<Seat> seats){
         seatRepository.saveAll(seats);
@@ -65,6 +66,7 @@ public class SeatServiceImpl implements SeatService {
 
     }
 
+    @Override
     @Transactional
     public void deleteByHall(Hall hall){
         seatRepository.deleteSeatByHall(hall);

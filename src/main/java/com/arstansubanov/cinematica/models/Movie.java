@@ -66,10 +66,6 @@ public class Movie {
         this.active = true;
     }
 
-    @PreUpdate
-    private void update(){
-        this.createdAt = new Date();
-    }
 
 }
 

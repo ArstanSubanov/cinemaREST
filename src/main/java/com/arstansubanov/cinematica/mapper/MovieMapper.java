@@ -4,7 +4,9 @@ import com.arstansubanov.cinematica.dto.MovieDTO;
 import com.arstansubanov.cinematica.models.Movie;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class MovieMapper implements BaseMapper<Movie, MovieDTO> {
 
     private final ModelMapper modelMapper;

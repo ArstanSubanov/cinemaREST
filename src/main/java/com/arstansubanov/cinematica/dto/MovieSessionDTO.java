@@ -5,8 +5,7 @@ import com.arstansubanov.cinematica.models.Movie;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -14,7 +13,10 @@ import javax.validation.constraints.*;
 import java.time.LocalTime;
 import java.util.Date;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MovieSessionDTO {
 
@@ -25,13 +27,13 @@ public class MovieSessionDTO {
     @NotBlank(message = "seat_rows can't be blank")
     @Min(value = 1, message = "sear_rows must be bigger than 1")
     @Max(value = 1000, message = "seat_row must be lower than 1000")
-    private Movie movie;
+    private MovieDTO movie;
 
     @NotEmpty(message = "seat_rows can't be empty")
     @NotBlank(message = "seat_rows can't be blank")
     @Min(value = 1, message = "sear_rows must be bigger than 1")
     @Max(value = 1000, message = "seat_row must be lower than 1000")
-    private Hall hall;
+    private HallDTO hall;
 
     @NotNull(message = "date can't be null")
     @Temporal(TemporalType.DATE)
