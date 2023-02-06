@@ -1,16 +1,20 @@
 package com.arstansubanov.cinematica.services.impl;
 
 import com.arstansubanov.cinematica.dto.CinemaDTO;
+import com.arstansubanov.cinematica.dto.MovieSessionDTO;
+import com.arstansubanov.cinematica.exceptions.CinemaNotFoundException;
 import com.arstansubanov.cinematica.mapper.CinemaMapper;
 import com.arstansubanov.cinematica.models.Cinema;
 import com.arstansubanov.cinematica.repository.CinemaRepository;
+import com.arstansubanov.cinematica.responses.CinemaResponse;
 import com.arstansubanov.cinematica.services.CinemaService;
+import com.arstansubanov.cinematica.services.HallService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,11 +24,14 @@ public class CinemaServiceImpl implements CinemaService {
 
     private final CinemaRepository cinemaRepository;
     private final CinemaMapper cinemaMapper;
+    private final HallService hallService;
+
 
     @Autowired
-    public CinemaServiceImpl(CinemaRepository cinemaRepository, CinemaMapper cinemaMapper) {
+    public CinemaServiceImpl(CinemaRepository cinemaRepository, @Lazy CinemaMapper cinemaMapper,@Lazy HallService hallService) {
         this.cinemaRepository = cinemaRepository;
         this.cinemaMapper = cinemaMapper;
+        this.hallService = hallService;
     }
 
     @Override
@@ -63,6 +70,26 @@ public class CinemaServiceImpl implements CinemaService {
 
     private Cinema getCinemaById(int id){
         Optional<Cinema> cinema = cinemaRepository.findById(id);
-        return cinema.orElse(null);
+        return cinema.orElseThrow(CinemaNotFoundException::new);
+    }
+
+
+    @Override
+    public List<CinemaResponse> getCinemaResponseList(List<MovieSessionDTO> movieSessionDTOS) {
+
+        Set<CinemaDTO> cinemaDTOS = new HashSet<>();
+        movieSessionDTOS.forEach(movieSessionDTO -> {
+            cinemaDTOS.add(movieSessionDTO.getHall().getCinema());
+        });
+
+        Set<CinemaResponse> cinemaResponses = new HashSet<>();
+        cinemaDTOS.forEach(cinemaDTO -> {
+            CinemaResponse cinemaResponse = new CinemaResponse();
+            cinemaResponse.setName(cinemaDTO.getName());
+            cinemaResponse.setHalls(hallService.getHallResponse(cinemaDTO, movieSessionDTOS));
+            cinemaResponses.add(cinemaResponse);
+        });
+
+        return cinemaResponses.stream().toList();
     }
 }

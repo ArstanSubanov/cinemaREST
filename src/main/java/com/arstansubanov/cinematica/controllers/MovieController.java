@@ -1,6 +1,8 @@
 package com.arstansubanov.cinematica.controllers;
 
 import com.arstansubanov.cinematica.dto.MovieDTO;
+import com.arstansubanov.cinematica.requests.MovieByIdAndDateRequest;
+import com.arstansubanov.cinematica.responses.MovieResponse;
 import com.arstansubanov.cinematica.services.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,6 +33,11 @@ public class MovieController {
         return movieService.findAll();
     }
 
+    @GetMapping("/getById")
+    public MovieDTO getById(@RequestParam @Valid int id){
+        return movieService.findById(id);
+    }
+
     @PostMapping
     public ResponseEntity<?> create(@RequestBody @Valid MovieDTO movieDTO){
         movieService.save(movieDTO);
@@ -47,6 +54,11 @@ public class MovieController {
     public ResponseEntity<?> delete(@RequestParam @Valid int id){
         movieService.delete(id);
         return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @GetMapping("/getSession")
+    public MovieResponse getMovieSessionByMovie(@RequestBody @Valid MovieByIdAndDateRequest movieByIdAndDateRequest){
+        return movieService.getMovieById(movieByIdAndDateRequest);
     }
 
 

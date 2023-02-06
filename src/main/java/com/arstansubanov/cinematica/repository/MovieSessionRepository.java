@@ -1,5 +1,6 @@
 package com.arstansubanov.cinematica.repository;
 
+import com.arstansubanov.cinematica.models.Movie;
 import com.arstansubanov.cinematica.models.MovieSession;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,4 +15,6 @@ import java.util.List;
 public interface MovieSessionRepository extends JpaRepository<MovieSession, Integer> {
     @Query(value = "from MovieSession m where m.date > :date OR (m.date = :date AND m.time > :time)")
     List<MovieSession> findAllFutureMovieSessions(@Param("date") Date date, @Param("time") LocalTime time);
+    @Query(value = "from MovieSession m where m.movie.id=:id")
+    List<MovieSession> findMovieSessionByMovieId(int id);
 }

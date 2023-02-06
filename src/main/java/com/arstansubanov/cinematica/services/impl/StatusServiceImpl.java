@@ -1,6 +1,7 @@
 package com.arstansubanov.cinematica.services.impl;
 
 import com.arstansubanov.cinematica.dto.StatusDTO;
+import com.arstansubanov.cinematica.exceptions.StatusNotFoundException;
 import com.arstansubanov.cinematica.mapper.StatusMapper;
 import com.arstansubanov.cinematica.models.Status;
 import com.arstansubanov.cinematica.repository.StatusRepository;
@@ -34,7 +35,7 @@ public class StatusServiceImpl implements StatusService {
     @Override
     public StatusDTO findById(int id) {
         Optional<Status> status = statusRepository.findById(id);
-        return statusMapper.convertToDto(status.orElse(null));
+        return statusMapper.convertToDto(status.orElseThrow(StatusNotFoundException::new));
     }
 
     @Override

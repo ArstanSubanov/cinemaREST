@@ -1,6 +1,7 @@
 package com.arstansubanov.cinematica.services.impl;
 
 import com.arstansubanov.cinematica.dto.UserDTO;
+import com.arstansubanov.cinematica.exceptions.UserNotFoundException;
 import com.arstansubanov.cinematica.mapper.UserMapper;
 import com.arstansubanov.cinematica.models.User;
 import com.arstansubanov.cinematica.repository.UserRepository;
@@ -37,16 +38,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void save(UserDTO userDTO) {
         userRepository.save(userMapper.convertToModel(userDTO));
     }
 
     @Override
+    @Transactional
     public void delete(int id) {
         userRepository.deleteById(id);
     }
 
     @Override
+    @Transactional
     public void update(int id, UserDTO userDTO) {
         User userToUpdate = getUserById(id);
         User user = userMapper.convertToModel(userDTO);
@@ -57,7 +61,7 @@ public class UserServiceImpl implements UserService {
 
     private User getUserById(int id){
         Optional<User> user = userRepository.findById(id);
-        return user.orElse(null);
+        return user.orElseThrow(UserNotFoundException::new);
     }
 
 }

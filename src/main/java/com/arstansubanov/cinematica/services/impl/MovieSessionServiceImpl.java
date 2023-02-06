@@ -3,24 +3,26 @@ package com.arstansubanov.cinematica.services.impl;
 import com.arstansubanov.cinematica.dto.HallDTO;
 import com.arstansubanov.cinematica.dto.MovieDTO;
 import com.arstansubanov.cinematica.dto.MovieSessionDTO;
+import com.arstansubanov.cinematica.exceptions.MovieSessionNotFoundException;
 import com.arstansubanov.cinematica.mapper.MovieSessionMapper;
 import com.arstansubanov.cinematica.mapper.MovieSessionRequestMapper;
 import com.arstansubanov.cinematica.models.MovieSession;
 import com.arstansubanov.cinematica.repository.MovieSessionRepository;
 import com.arstansubanov.cinematica.requests.MovieSessionRequest;
+import com.arstansubanov.cinematica.responses.MovieSessionResponse;
 import com.arstansubanov.cinematica.services.HallService;
 import com.arstansubanov.cinematica.services.MovieService;
 import com.arstansubanov.cinematica.services.MovieSessionService;
+import com.arstansubanov.cinematica.services.PriceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,14 +34,16 @@ public class MovieSessionServiceImpl implements MovieSessionService {
     private final MovieService movieService;
     private final HallService hallService;
     private final MovieSessionRequestMapper movieSessionRequestMapper;
+    private final PriceService priceService;
 
     @Autowired
-    public MovieSessionServiceImpl(MovieSessionRepository movieSessionRepository, MovieSessionMapper movieSessionMapper, MovieService movieService, HallService hallService, MovieSessionRequestMapper movieSessionRequestMapper) {
+    public MovieSessionServiceImpl(MovieSessionRepository movieSessionRepository, MovieSessionMapper movieSessionMapper, MovieService movieService, @Lazy HallService hallService, MovieSessionRequestMapper movieSessionRequestMapper, @Lazy PriceService priceService) {
         this.movieSessionRepository = movieSessionRepository;
         this.movieSessionMapper = movieSessionMapper;
         this.movieService = movieService;
         this.hallService = hallService;
         this.movieSessionRequestMapper = movieSessionRequestMapper;
+        this.priceService = priceService;
     }
 
     @Override
@@ -104,8 +108,28 @@ public class MovieSessionServiceImpl implements MovieSessionService {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
+    @Override
+    public List<MovieSessionDTO> getMovieSessionByMovie(int id) {
+        return movieSessionRepository.findMovieSessionByMovieId(id).stream().map(movieSessionMapper::convertToDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<MovieSessionResponse> getMovieSessionResponses(HallDTO hallDTO, List<MovieSessionDTO> movieSessionDTOS) {
+        Set<MovieSessionResponse> movieSessionResponses = new HashSet<>();
+        movieSessionDTOS.forEach(movieSessionDTO -> {
+            if (movieSessionDTO.getHall().getId()==hallDTO.getId()){
+                MovieSessionResponse movieSessionResponse = new MovieSessionResponse();
+                movieSessionResponse.setDate(movieSessionDTO.getDate());
+                movieSessionResponse.setTime(movieSessionDTO.getTime());
+                movieSessionResponse.setPrices(priceService.getPriceByMovieSession(movieSessionDTO));
+                movieSessionResponses.add(movieSessionResponse);
+            }
+        });
+        return movieSessionResponses.stream().toList();
+    }
+
     private MovieSession getMovieSessionById(int id){
         Optional<MovieSession> movieSession = movieSessionRepository.findById(id);
-        return movieSession.orElse(null);
+        return movieSession.orElseThrow(MovieSessionNotFoundException::new);
     }
 }

@@ -18,5 +18,5 @@ public class SeatDTO {
 
     private int placeNumber;
 
-    private Hall hall;
+    private HallDTO hall;
 }

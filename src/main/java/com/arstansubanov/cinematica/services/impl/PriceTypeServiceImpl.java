@@ -1,6 +1,7 @@
 package com.arstansubanov.cinematica.services.impl;
 
 import com.arstansubanov.cinematica.dto.PriceTypeDTO;
+import com.arstansubanov.cinematica.exceptions.PriceTypeNotFoundException;
 import com.arstansubanov.cinematica.mapper.PriceTypeMapper;
 import com.arstansubanov.cinematica.models.PriceType;
 import com.arstansubanov.cinematica.repository.PriceTypeRepository;
@@ -58,6 +59,6 @@ public class PriceTypeServiceImpl implements PriceTypeService {
 
     private PriceType getPriceTypeById(int id){
         Optional<PriceType> priceType = priceTypeRepository.findById(id);
-        return priceType.orElse(null);
+        return priceType.orElseThrow(PriceTypeNotFoundException::new);
     }
 }

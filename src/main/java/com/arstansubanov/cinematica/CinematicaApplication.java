@@ -12,11 +12,11 @@ public class CinematicaApplication {
         SpringApplication.run(CinematicaApplication.class, args);
     }
 
-    @Bean
-    public ModelMapper modelMapper(){
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.getConfiguration().setAmbiguityIgnored(true);
-        return modelMapper;
-    }
+//    @Bean
+//    public ModelMapper modelMapper(){
+//        ModelMapper modelMapper = new ModelMapper();
+//        modelMapper.getConfiguration().setAmbiguityIgnored(true);
+//        return modelMapper;
+//    }
 
 }

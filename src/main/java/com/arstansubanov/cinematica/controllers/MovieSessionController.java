@@ -27,6 +27,11 @@ public class MovieSessionController {
         return movieSessionService.findAll();
     }
 
+    @GetMapping("/getById")
+    public MovieSessionDTO getById(@RequestParam @Valid int id){
+        return movieSessionService.findById(id);
+    }
+
     @PostMapping
     public ResponseEntity<?> create(@RequestBody @Valid MovieSessionRequest movieSessionRequest){
         return movieSessionService.create(movieSessionRequest);

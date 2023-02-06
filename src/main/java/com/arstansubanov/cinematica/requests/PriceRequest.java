@@ -1,10 +1,7 @@
-package com.arstansubanov.cinematica.dto;
+package com.arstansubanov.cinematica.requests;
 
-import com.arstansubanov.cinematica.models.MovieSession;
-import com.arstansubanov.cinematica.models.PriceType;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.*;
+import com.arstansubanov.cinematica.dto.MovieSessionDTO;
+import com.arstansubanov.cinematica.dto.PriceTypeDTO;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -16,22 +13,19 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PriceDTO {
-
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY, value = "id")
-    private int id;
+public class PriceRequest {
 
     @NotEmpty(message = "session_id can't be empty")
     @NotBlank(message = "session_id can't be blank")
     @Min(value = 1, message = "session_id must be bigger than 1")
     @NotNull(message = "session_id must be not null")
-    private MovieSessionDTO movieSession;
+    private int movieSessionId;
 
     @NotEmpty(message = "price_type_id can't be empty")
     @NotBlank(message = "price_type_id can't be blank")
     @Min(value = 1, message = "price_type_id must be bigger than 1")
     @NotNull(message = "price_type_id must be not null")
-    private PriceTypeDTO priceType;
+    private int priceTypeId;
 
     @NotEmpty(message = "price can't be empty")
     @NotBlank(message = "price can't be blank")
