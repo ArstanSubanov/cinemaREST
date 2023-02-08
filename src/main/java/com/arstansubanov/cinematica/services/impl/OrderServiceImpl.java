@@ -2,21 +2,21 @@ package com.arstansubanov.cinematica.services.impl;
 
 import com.arstansubanov.cinematica.dto.*;
 import com.arstansubanov.cinematica.exceptions.OrderNotFoundException;
+import com.arstansubanov.cinematica.mapper.MovieSessionMapper;
 import com.arstansubanov.cinematica.mapper.OrderMapper;
 import com.arstansubanov.cinematica.models.MovieSession;
 import com.arstansubanov.cinematica.models.Order;
-import com.arstansubanov.cinematica.repository.MovieSessionRepository;
 import com.arstansubanov.cinematica.repository.OrderRepository;
 import com.arstansubanov.cinematica.requests.OrderRequest;
 import com.arstansubanov.cinematica.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,21 +27,23 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
-    private final MovieSessionRepository movieSessionRepository;
+    private final MovieSessionService movieSessionService;
     private final PriceService priceService;
     private final UserService userService;
     private final SeatService seatService;
     private final StatusService statusService;
+    private final MovieSessionMapper movieSessionMapper;
 
     @Autowired
-    public OrderServiceImpl(OrderRepository orderRepository, OrderMapper orderMapper, MovieSessionRepository movieSessionRepository, PriceService priceService, UserService userService, SeatService seatService, StatusService statusService) {
+    public OrderServiceImpl(OrderRepository orderRepository, OrderMapper orderMapper, @Lazy MovieSessionService movieSessionService, PriceService priceService, UserService userService, SeatService seatService, StatusService statusService, MovieSessionMapper movieSessionMapper) {
         this.orderRepository = orderRepository;
         this.orderMapper = orderMapper;
-        this.movieSessionRepository = movieSessionRepository;
+        this.movieSessionService = movieSessionService;
         this.priceService = priceService;
         this.userService = userService;
         this.seatService = seatService;
         this.statusService = statusService;
+        this.movieSessionMapper = movieSessionMapper;
     }
 
     @Override
@@ -78,7 +80,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderDTO> getActiveOrders() {
-        List<MovieSession> movieSessions = movieSessionRepository.findAllFutureMovieSessions(new Date(), LocalTime.now());
+        List<MovieSession> movieSessions = movieSessionService.getActualMovieSessions()
+                .stream()
+                .map(movieSessionMapper::convertToModel).collect(Collectors.toList());
         return orderRepository.findAllFutureOrders(movieSessions).stream().map(orderMapper::convertToDto).collect(Collectors.toList());
     }
 
@@ -86,7 +90,12 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public ResponseEntity<?> create(OrderRequest orderRequest) {
         OrderDTO orderDTO = enrichOrderDTO(orderRequest);
-        orderRepository.save(orderMapper.convertToModel(orderDTO));
+        try {
+            orderRepository.save(orderMapper.convertToModel(orderDTO));
+        } catch (RuntimeException e) {
+            throw new DuplicateKeyException(e.getMessage());
+        }
+
         return ResponseEntity.ok(HttpStatus.CREATED);
     }
 
@@ -98,24 +107,30 @@ public class OrderServiceImpl implements OrderService {
         orderDTO.setId(id);
         Order order = orderMapper.convertToModel(orderDTO);
         order.setCreatedAt(orderToUpdate.getCreatedAt());
-        orderRepository.save(order);
-        return ResponseEntity.ok(HttpStatus.OK);    }
+        try {
+            orderRepository.save(order);
+        } catch (RuntimeException e) {
+            throw new DuplicateKeyException(e.getMessage());
+        }
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
 
     @Override
     public List<OrderDTO> findOrderByMovieSession(MovieSessionDTO movieSessionDTO) {
         return findAll()
                 .stream()
-                .filter(order -> order.getPrice().getMovieSession().getId()==movieSessionDTO.getId())
+                .filter(order -> order.getPrice().getMovieSession().getId() == movieSessionDTO.getId())
                 .collect(Collectors.toList());
     }
 
-    private Order getOrderById(int id){
+    private Order getOrderById(int id) {
         Optional<Order> order = orderRepository.findById(id);
         return order.orElseThrow(OrderNotFoundException::new);
     }
 
-    private OrderDTO enrichOrderDTO(OrderRequest orderRequest){
-        UserDTO userDTO = userService.findById(orderRequest.getUserId());
+    private OrderDTO enrichOrderDTO(OrderRequest orderRequest) {
+        MovieSessionDTO movieSessionDTO = movieSessionService.findById(orderRequest.getSessionId());
+        UserDTO userDTO = userService.findById(1);
         SeatDTO seatDTO = seatService.findById(orderRequest.getSeatId());
         PriceDTO priceDTO = priceService.findById(orderRequest.getPriceId());
         StatusDTO statusDTO = statusService.findById(orderRequest.getStatusId());
@@ -125,6 +140,7 @@ public class OrderServiceImpl implements OrderService {
         orderDTO.setSeat(seatDTO);
         orderDTO.setStatus(statusDTO);
         orderDTO.setUser(userDTO);
+        orderDTO.setMovieSession(movieSessionDTO);
         return orderDTO;
     }
 }

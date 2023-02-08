@@ -1,5 +1,6 @@
 package com.arstansubanov.cinematica;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,12 +12,5 @@ public class CinematicaApplication {
     public static void main(String[] args) {
         SpringApplication.run(CinematicaApplication.class, args);
     }
-
-//    @Bean
-//    public ModelMapper modelMapper(){
-//        ModelMapper modelMapper = new ModelMapper();
-//        modelMapper.getConfiguration().setAmbiguityIgnored(true);
-//        return modelMapper;
-//    }
 
 }

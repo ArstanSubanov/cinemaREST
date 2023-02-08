@@ -119,6 +119,7 @@ public class MovieSessionServiceImpl implements MovieSessionService {
         movieSessionDTOS.forEach(movieSessionDTO -> {
             if (movieSessionDTO.getHall().getId()==hallDTO.getId()){
                 MovieSessionResponse movieSessionResponse = new MovieSessionResponse();
+                movieSessionResponse.setId(movieSessionDTO.getId());
                 movieSessionResponse.setDate(movieSessionDTO.getDate());
                 movieSessionResponse.setTime(movieSessionDTO.getTime());
                 movieSessionResponse.setPrices(priceService.getPriceByMovieSession(movieSessionDTO));

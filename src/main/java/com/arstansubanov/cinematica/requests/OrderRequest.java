@@ -1,5 +1,6 @@
 package com.arstansubanov.cinematica.requests;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -10,29 +11,32 @@ import javax.validation.constraints.*;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderRequest {
 
-    @NotEmpty(message = "price_id can't be empty")
-    @NotBlank(message = "price_id can't be blank")
-    @Min(value = 1, message = "price_id must be bigger than 1")
-    @NotNull(message = "price_id must be not null")
-    private int priceId;
+    int sessionId;
 
     @NotEmpty(message = "price_id can't be empty")
     @NotBlank(message = "price_id can't be blank")
     @Min(value = 1, message = "price_id must be bigger than 1")
     @NotNull(message = "price_id must be not null")
-    private int seatId;
+    int priceId;
+
+    @NotEmpty(message = "price_id can't be empty")
+    @NotBlank(message = "price_id can't be blank")
+    @Min(value = 1, message = "price_id must be bigger than 1")
+    @NotNull(message = "price_id must be not null")
+    int seatId;
 
     @NotEmpty(message = "status can't be empty")
     @NotBlank(message = "status can't be blank")
     @Min(value = 1, message = "status must be bigger than 1")
     @NotNull(message = "status must be not null")
-    private int statusId;
+    int statusId;
 
     @NotEmpty(message = "email can't be empty")
     @NotBlank(message = "email can't be blank")
     @Email(message = "please, enter your email")
     @NotNull(message = "email must be not null")
-    private String email;
+    String email;
 
-    private int userId;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    int userId;
 }

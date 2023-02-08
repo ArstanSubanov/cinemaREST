@@ -3,6 +3,8 @@ package com.arstansubanov.cinematica.controllers;
 import com.arstansubanov.cinematica.dto.MovieSessionDTO;
 import com.arstansubanov.cinematica.requests.MovieSessionRequest;
 import com.arstansubanov.cinematica.services.MovieSessionService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,8 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+@Tag(name = "Сеанс", description = "API сеанса")
 @RestController
-@RequestMapping("/seance")
+@RequestMapping("/api/v1/seance")
 public class MovieSessionController {
 
     private final MovieSessionService movieSessionService;
@@ -22,27 +25,32 @@ public class MovieSessionController {
         this.movieSessionService = movieSessionService;
     }
 
-    @GetMapping
+    @Operation(summary = "Вывод всех будущих сеансов")
+    @GetMapping("/all")
     public List<MovieSessionDTO> getNextMovies(){
-        return movieSessionService.findAll();
+        return movieSessionService.getActualMovieSessions();
     }
 
+    @Operation(summary = "Вывод сеанса по ID")
     @GetMapping("/getById")
     public MovieSessionDTO getById(@RequestParam @Valid int id){
         return movieSessionService.findById(id);
     }
 
-    @PostMapping
+    @Operation(summary = "Добавление сеанса")
+    @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody @Valid MovieSessionRequest movieSessionRequest){
         return movieSessionService.create(movieSessionRequest);
     }
 
-    @PutMapping
+    @Operation(summary = "Обновление сеанса")
+    @PutMapping("/update")
     public ResponseEntity<?> update(@RequestParam @Valid int id, @RequestBody @Valid MovieSessionRequest movieSessionRequest){
         return movieSessionService.updateMovieSession(id, movieSessionRequest);
     }
 
-    @DeleteMapping
+    @Operation(summary = "Удаление сеанса")
+    @DeleteMapping("/delete")
     public ResponseEntity<?> delete(int id){
         movieSessionService.delete(id);
         return ResponseEntity.ok(HttpStatus.OK);

@@ -31,6 +31,8 @@ public class OrderDTO {
     @NotNull(message = "price_id must be not null")
     private SeatDTO seat;
 
+    private MovieSessionDTO movieSession;
+
     @NotEmpty(message = "status can't be empty")
     @NotBlank(message = "status can't be blank")
     @Min(value = 1, message = "status must be bigger than 1")
@@ -43,5 +45,6 @@ public class OrderDTO {
     @NotNull(message = "email must be not null")
     private String email;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY, value = "user")
     private UserDTO user;
 }

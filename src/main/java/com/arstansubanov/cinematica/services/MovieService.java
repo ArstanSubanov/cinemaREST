@@ -9,4 +9,5 @@ import java.util.List;
 public interface MovieService extends BaseService<MovieDTO> {
     List<MovieDTO> getAllActiveMovies();
     MovieResponse getMovieById(MovieByIdAndDateRequest movieByIdAndDateRequest);
+    List<MovieDTO> getMoviesByOffsetAndLimit(int offset, int limit);
 }

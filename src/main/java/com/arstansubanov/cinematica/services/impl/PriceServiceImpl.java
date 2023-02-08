@@ -14,6 +14,7 @@ import com.arstansubanov.cinematica.services.MovieSessionService;
 import com.arstansubanov.cinematica.services.PriceService;
 import com.arstansubanov.cinematica.services.PriceTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -88,7 +89,11 @@ public class PriceServiceImpl implements PriceService {
         priceDTO.setMovieSession(movieSessionDTO);
         priceDTO.setPriceType(priceTypeDTO);
 
-        priceRepository.save(priceMapper.convertToModel(priceDTO));
+        try {
+            priceRepository.save(priceMapper.convertToModel(priceDTO));
+        }catch (RuntimeException e){
+            throw new DuplicateKeyException(e.getMessage());
+        }
         return ResponseEntity.ok(HttpStatus.CREATED);
     }
 
@@ -106,7 +111,11 @@ public class PriceServiceImpl implements PriceService {
         Price price = priceMapper.convertToModel(priceDTO);
         price.setCreatedAt(priceToUpdate.getCreatedAt());
 
-        priceRepository.save(price);
+        try {
+            priceRepository.save(price);
+        }catch (RuntimeException e){
+            throw new DuplicateKeyException(e.getMessage());
+        }
         return ResponseEntity.ok(HttpStatus.OK);
     }
 

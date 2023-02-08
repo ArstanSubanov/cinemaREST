@@ -1,6 +1,6 @@
 package com.arstansubanov.cinematica.exceptions;
 
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -57,5 +57,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> userNotFound(MovieSessionNotFoundException e){
         return new ResponseEntity<>(new ErrorResponse(HttpStatus.NOT_FOUND.value(), "MovieSession with this id not found"), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(DuplicateKeyException.class)
+    public ResponseEntity<ErrorResponse> duplicateKeyException(DuplicateKeyException e){
+        return new ResponseEntity<>(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Cannot save entity with this keys"), HttpStatus.NOT_FOUND);
     }
 }

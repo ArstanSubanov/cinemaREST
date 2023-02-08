@@ -11,6 +11,6 @@ import java.util.List;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Integer> {
-    @Query(value = "from Order o where o.price.movieSession in :activemoviesession")
+    @Query(value = "from Order o where o.movieSession in :activemoviesession")
     List<Order> findAllFutureOrders(@Param("activemoviesession") List<MovieSession> activemoviesession);
 }

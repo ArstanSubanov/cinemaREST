@@ -79,36 +79,17 @@ public class MovieServiceImpl implements MovieService {
         System.out.println(movieSessionDTOS);
         MovieResponse movieResponse = new MovieResponse();
         movieResponse.setMovie(movieMapper.convertToDto(getMovieById(movieByIdAndDateRequest.getMovieId())));
-//        List<CinemaResponse> cinemaResponses = new ArrayList<>();
-//
-//        movieSessionDTOS.forEach(movieSessionDTO -> {
-//            CinemaResponse cinemaResponse = new CinemaResponse();
-//            cinemaResponse.setName(movieSessionDTO.getHall().getCinema().getName());
-//            List<HallDTO> hallDTOS = hallService.findHallDtoByCinema(movieSessionDTO.getHall().getCinema().getId())
-//                    .stream()
-//                    .filter(hallDTO -> hallDTO.getId()==movieSessionDTO.getHall().getId())
-//                    .collect(Collectors.toList());
-//            List<HallResponse> hallResponses = new ArrayList<>();
-//            hallDTOS.forEach(hallDTO -> {
-//                HallResponse hallResponse = new HallResponse();
-//                hallResponse.setName(hallDTO.getName());
-//                List<MovieSessionResponse> movieSessionResponses = new ArrayList<>();
-//                MovieSessionResponse movieSessionResponse = new MovieSessionResponse();
-//                movieSessionResponse.setDate(movieSessionDTO.getDate());
-//                movieSessionResponse.setTime(movieSessionDTO.getTime());
-//                List<PriceResponse> priceResponses = priceService.getPriceByMovieSession(movieSessionDTO);
-//                movieSessionResponse.setPrices(priceResponses);
-//                movieSessionResponses.add(movieSessionResponse);
-//                hallResponse.setMovieSessions(movieSessionResponses);
-//                hallResponses.add(hallResponse);
-//            });
-//            cinemaResponse.setHalls(hallResponses);
-//            cinemaResponses.add(cinemaResponse);
-//        });
-
 
         movieResponse.setCinemas(cinemaService.getCinemaResponseList(movieSessionDTOS));
         return movieResponse;
+    }
+
+    @Override
+    public List<MovieDTO> getMoviesByOffsetAndLimit(int offset, int limit) {
+        return movieRepository.getMoviesByOffsetAndLimit(offset, limit)
+                .stream()
+                .map(movieMapper::convertToDto)
+                .collect(Collectors.toList());
     }
 
     private Movie getMovieById(int id){

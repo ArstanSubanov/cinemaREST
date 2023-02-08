@@ -15,6 +15,8 @@ import java.util.List;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MovieSessionResponse {
+
+    private int id;
     @NotNull(message = "date can't be null")
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
